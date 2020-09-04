@@ -1,0 +1,16 @@
+.bold-text{
+    font-weight: bold;
+}
+
+p{
+    margin: 0;
+}
+
+.pic-wrapper{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    img{
+        border-radius: 15px;
+    }
+}
