@@ -1,8 +1,9 @@
 import React from 'react';
 import './MovieList.scss';
-import axios from 'axios';
 import MovieModal from './MovieModal';
 import LoadingScreen from './LoadingSecreen';
+import { connect } from 'react-redux';
+import PropTypes from 'prop-types';
 import { 
     Form,
     Container,
@@ -12,21 +13,23 @@ import {
     Col,
     Row
 } from 'react-bootstrap';
+import { 
+    searchMovie, 
+    getMovie, 
+    handleFav
+} from '../actions/movieAction';
 
-export default class MovieList extends React.Component {
+class MovieList extends React.Component {
 
     constructor(props){
         super(props);
         this.title = React.createRef();
-        this.movies = ['aaa', 'bbb'];
         this.state = {
-            movies: [],
             modal: false,
-            current_modal: {},
             loading: false
         }
         this.handleSubmit = this.handleSubmit.bind(this);
-        this.handleFav = this.handleFav.bind(this);
+        this.handleClickFav = this.handleClickFav.bind(this);
         this.handleShowModal = this.handleShowModal.bind(this);
         this.handleHideModal = this.handleHideModal.bind(this);
         this.setOnLoading = this.setOnLoading.bind(this);
@@ -53,47 +56,19 @@ export default class MovieList extends React.Component {
         }
     }
 
-    handleFav(object){
-        const new_movies = this.state.movies.map(movie => {
-            if (movie.imdbID == object.imdbID) {
-                if (movie.Fav) {
-                    movie.Fav = false
-                    return movie
-                } else {
-                    movie.Fav = true
-                    return movie
-                }
-            } else {
-                return movie
-            }
-        })
-        const new_state = {
-            ...this.state,
-            movies: new_movies
-        }
-        this.setState(new_state)
+    handleClickFav(imdbID){
+        this.props.handleFav(imdbID);
     }
 
     handleShowModal(imdbID) {
-        console.log('handleShowModal clicked', imdbID)
-        this.setOnLoading()
-        axios.get(`http://www.omdbapi.com/?apikey=61a7922a&i=${imdbID}`)
-            .then(res => {
-                console.log(res.data)
-                const new_current_modal = res.data
-                const new_state = {
-                    ...this.state,
-                    modal: true,
-                    current_modal: new_current_modal
-                }
-                this.setState(new_state)
-                console.log(this.state)
-                setTimeout(() => this.setOffLoading(), 200);
-            })
-            .catch(err => {
-                console.log(err)
-                setTimeout(() => this.setOffLoading(), 200);
-            })
+        this.setOnLoading();
+        this.props.getMovie(imdbID);
+        const new_state = {
+            ...this.state,
+            modal: true
+        }
+        this.setState(new_state);
+        this.setOffLoading();
     }
 
     handleHideModal() {
@@ -109,41 +84,8 @@ export default class MovieList extends React.Component {
         if (this.title.current.value) {
             this.setOnLoading();
             console.log('submit clicked', this.title.current.value)
-            axios.get(`http://www.omdbapi.com/?apikey=61a7922a&s=${this.title.current.value}`)
-                .then(res => {
-                    console.log(res)
-                    if (res.data.Response === "True"){
-                        let raw_movies = res.data.Search;
-                        let movies = [];
-                        for (let i = 0; i < raw_movies.length; i++) {
-                            let movie = {
-                                Poster: raw_movies[i].Poster,
-                                Title: raw_movies[i].Title,
-                                Type: raw_movies[i].Type,
-                                Year: raw_movies[i].Year,
-                                imdbID: raw_movies[i].imdbID,
-                                Fav: false
-                            }
-                            movies.push(movie);
-                        }
-                        const new_state = {
-                            ...this.state,
-                            movies: movies,
-                        }
-                        this.setState(new_state)
-                    }else{
-                        const new_state = {
-                            ...this.state,
-                            movies: [],
-                        }
-                        this.setState(new_state)
-                    }
-                    setTimeout(() => this.setOffLoading(), 300);
-                })
-                .catch(err => {
-                    console.log('eerrrror', err)
-                    setTimeout(() => this.setOffLoading(), 300);
-                })
+            this.props.searchMovie(this.title.current.value)
+            setTimeout(() => this.setOffLoading(), 500);
         } else {
             alert("Upsss, title can't be empty")
         }
@@ -179,8 +121,8 @@ export default class MovieList extends React.Component {
                         </Row>
                     </ListGroup.Item>
                     {   
-                        this.state.movies.length
-                        ? this.state.movies.map((object, i)=>{
+                        this.props.movies.length
+                        ? this.props.movies.map((object, i)=>{
                             return (
                                 <div obj={object.imdbID} key={i}>
                                     <ListGroup.Item>
@@ -193,8 +135,8 @@ export default class MovieList extends React.Component {
                                             <Col md={2} className="fav-icon">
                                                 {
                                                     object.Fav
-                                                    ? <img onClick={() => this.handleFav(object)} src={`../assets/golden-star.png`} alt="star"></img>
-                                                    : <img onClick={() => this.handleFav(object)} src={`../assets/star.png`} alt="star"></img>
+                                                    ? <img onClick={() => this.handleClickFav(object.imdbID)} src={`../assets/golden-star.png`} alt="star"></img>
+                                                    : <img onClick={() => this.handleClickFav(object.imdbID)} src={`../assets/star.png`} alt="star"></img>
                                                 }
                                             </Col>
                                         </Row>
@@ -203,15 +145,30 @@ export default class MovieList extends React.Component {
                             )
                         })
 
-                        : <h4>not found</h4>
+                        : <span></span>
                     }
                 </ListGroup>
                 <MovieModal
                     onHideModal = {this.handleHideModal}
                     modal = {this.state.modal}
-                    movie = {this.state.current_modal}
+                    movie = {this.props.current_modal}
                 ></MovieModal>
             </Container>
         )
     }
 }
+
+MovieList.propTypes = {
+    movies: PropTypes.array.isRequired,
+    current_modal: PropTypes.object.isRequired,
+    searchMovie: PropTypes.func.isRequired,
+    getMovie: PropTypes.func.isRequired,
+    handleFav: PropTypes.func.isRequired
+}
+
+const mapStateToProps = state => ({
+    movies: state.data.movies,
+    current_modal: state.data.current_modal
+})
+
+export default connect(mapStateToProps, { searchMovie, getMovie, handleFav } )(MovieList)
