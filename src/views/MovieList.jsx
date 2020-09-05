@@ -83,7 +83,6 @@ class MovieList extends React.Component {
         e.preventDefault();
         if (this.title.current.value) {
             this.setOnLoading();
-            console.log('submit clicked', this.title.current.value)
             this.props.searchMovie(this.title.current.value)
             setTimeout(() => this.setOffLoading(), 500);
         } else {

@@ -1,9 +1,10 @@
 import React from 'react';
+import './FavoriteMovie.scss';
 import { connect } from 'react-redux';
 import MovieModal from '../components/MovieModal';
 import LoadingScreen from '../components/LoadingSecreen';
 import PropTypes from 'prop-types';
-import { getAllFavMovies, getMovie, handleFavList } from '../actions/movieAction';
+import { getAllFavMovies, getMovie, handleFavList, handleFav } from '../actions/movieAction';
 import { 
     Container,
     ListGroup,
@@ -29,12 +30,6 @@ class FavoriteMovie extends React.Component{
         this.props.getAllFavMovies();
     }
 
-    componentDidUpdate(prevProps){
-        if (prevProps.fav_movies !== this.props.fav_movies) {
-            console.log('changesssssssss')
-        }
-    }
-
     setOnLoading(){
         if(!this.state.loading){
             const new_state = {
@@ -56,8 +51,8 @@ class FavoriteMovie extends React.Component{
     }
 
     handleClickFav(imdbID){
-        console.log('handle fav clicked')
         this.props.handleFavList(imdbID);
+        this.props.handleFav(imdbID);
     }
 
     handleShowModal(imdbID) {
@@ -123,6 +118,7 @@ FavoriteMovie.propTypes = {
     getAllFavMovies: PropTypes.func.isRequired,
     getMovie: PropTypes.func.isRequired,
     handleFavList: PropTypes.func.isRequired,
+    handleFav: PropTypes.func.isRequired,
     current_modal: PropTypes.object.isRequired
 }
 
@@ -131,4 +127,4 @@ const mapStateToProps = state => ({
     current_modal: state.data.current_modal
 })
 
-export default connect(mapStateToProps, { getAllFavMovies, getMovie, handleFavList }) (FavoriteMovie)
+export default connect(mapStateToProps, { getAllFavMovies, getMovie, handleFavList, handleFav }) (FavoriteMovie)
