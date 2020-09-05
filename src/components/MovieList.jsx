@@ -53,9 +53,25 @@ export default class MovieList extends React.Component {
         }
     }
 
-    handleFav(id,e){
-        e.preventDefault()
-        // alert('test',id)
+    handleFav(object){
+        const new_movies = this.state.movies.map(movie => {
+            if (movie.imdbID == object.imdbID) {
+                if (movie.Fav) {
+                    movie.Fav = false
+                    return movie
+                } else {
+                    movie.Fav = true
+                    return movie
+                }
+            } else {
+                return movie
+            }
+        })
+        const new_state = {
+            ...this.state,
+            movies: new_movies
+        }
+        this.setState(new_state)
     }
 
     handleShowModal(imdbID) {
@@ -148,10 +164,6 @@ export default class MovieList extends React.Component {
                             <InputGroup.Append>
                                 <Button className="search-button" variant="primary" type="submit">
                                     Search Movie
-                                    {/* { this.state.search_loading
-                                        ?<Spinner size="sm" animation="border" variant="light" />
-                                        :<p className="search-text">Search Movie</p>
-                                    } */}
                                 </Button>
                             </InputGroup.Append>
                         </InputGroup>
@@ -178,11 +190,11 @@ export default class MovieList extends React.Component {
                                             </Col>
                                             <Col md={2}>{object.Year}</Col>
                                             <Col md={3}>{object.imdbID}</Col>
-                                            <Col md={2}>
+                                            <Col md={2} className="fav-icon">
                                                 {
                                                     object.Fav
-                                                    ? <img src={`../assets/golden-star.png`} alt="star"></img>
-                                                    : <img src={`../assets/star.png`} alt="star"></img>
+                                                    ? <img onClick={() => this.handleFav(object)} src={`../assets/golden-star.png`} alt="star"></img>
+                                                    : <img onClick={() => this.handleFav(object)} src={`../assets/star.png`} alt="star"></img>
                                                 }
                                             </Col>
                                         </Row>
