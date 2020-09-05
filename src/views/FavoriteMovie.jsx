@@ -2,7 +2,7 @@ import React from 'react';
 import './FavoriteMovie.scss';
 import { connect } from 'react-redux';
 import MovieModal from '../components/MovieModal';
-import LoadingScreen from '../components/LoadingSecreen';
+import LoadingScreen from '../components/LoadingScreen';
 import PropTypes from 'prop-types';
 import { getAllFavMovies, getMovie, handleFavList, handleFav } from '../actions/movieAction';
 import { 
@@ -100,8 +100,16 @@ class FavoriteMovie extends React.Component{
                     ? <LoadingScreen></LoadingScreen>
                     : <span></span>
                 }
-                <h1>FavoriteMovie Page</h1>
+                <h2>Favorite Movie</h2>
                 <ListGroup>
+                    <ListGroup.Item>
+                        <Row>
+                            <Col md={5}><h5>Title</h5></Col>
+                            <Col md={2}><h5>Year</h5></Col>
+                            <Col md={3}><h5>Imdb ID</h5></Col>
+                            <Col md={2}></Col>
+                        </Row>
+                    </ListGroup.Item>
                     {movie_list}
                 </ListGroup>
                 <MovieModal

@@ -19,7 +19,7 @@ import {
 export default class Main extends React.Component {
     render() {
         return(
-            <Container>
+            <Container className="main-container">
                 <Row className="title justify-content-between align-items-center py-2">
                     <Col className="d-flex">
                         <img src={`../assets/multimedia.png`} alt="logo"/>

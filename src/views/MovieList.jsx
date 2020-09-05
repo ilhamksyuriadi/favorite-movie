@@ -1,7 +1,7 @@
 import React from 'react';
 import './MovieList.scss';
 import MovieModal from '../components/MovieModal';
-import LoadingScreen from '../components/LoadingSecreen';
+import LoadingScreen from '../components/LoadingScreen';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { 
@@ -84,7 +84,7 @@ class MovieList extends React.Component {
         if (this.title.current.value) {
             this.setOnLoading();
             this.props.searchMovie(this.title.current.value)
-            setTimeout(() => this.setOffLoading(), 500);
+            setTimeout(() => this.setOffLoading(), 800);
         } else {
             alert("Upsss, title can't be empty")
         }
