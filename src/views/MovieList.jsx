@@ -1,7 +1,7 @@
 import React from 'react';
 import './MovieList.scss';
-import MovieModal from './MovieModal';
-import LoadingScreen from './LoadingSecreen';
+import MovieModal from '../components/MovieModal';
+import LoadingScreen from '../components/LoadingSecreen';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 import { 
@@ -92,6 +92,29 @@ class MovieList extends React.Component {
     }
 
     render() {
+        const movie_list = this.props.movies.map((object, i)=>{
+            return (
+                <div obj={object.imdbID} key={i}>
+                    <ListGroup.Item>
+                        <Row>
+                            <Col md={5}>
+                                <p className="movie-title" onClick={() => this.handleShowModal(object.imdbID)}>{object.Title}</p>
+                            </Col>
+                            <Col md={2}>{object.Year}</Col>
+                            <Col md={3}>{object.imdbID}</Col>
+                            <Col md={2} className="fav-icon">
+                                {
+                                    object.Fav
+                                    ? <img onClick={() => this.handleClickFav(object.imdbID)} src={`../assets/golden-star.png`} alt="star"></img>
+                                    : <img onClick={() => this.handleClickFav(object.imdbID)} src={`../assets/star.png`} alt="star"></img>
+                                }
+                            </Col>
+                        </Row>
+                    </ListGroup.Item>
+                </div>
+            )
+        })
+
         return(
             <Container>
                 {
@@ -122,29 +145,7 @@ class MovieList extends React.Component {
                     </ListGroup.Item>
                     {   
                         this.props.movies.length
-                        ? this.props.movies.map((object, i)=>{
-                            return (
-                                <div obj={object.imdbID} key={i}>
-                                    <ListGroup.Item>
-                                        <Row>
-                                            <Col md={5}>
-                                                <p className="movie-title" onClick={() => this.handleShowModal(object.imdbID)}>{object.Title}</p>
-                                            </Col>
-                                            <Col md={2}>{object.Year}</Col>
-                                            <Col md={3}>{object.imdbID}</Col>
-                                            <Col md={2} className="fav-icon">
-                                                {
-                                                    object.Fav
-                                                    ? <img onClick={() => this.handleClickFav(object.imdbID)} src={`../assets/golden-star.png`} alt="star"></img>
-                                                    : <img onClick={() => this.handleClickFav(object.imdbID)} src={`../assets/star.png`} alt="star"></img>
-                                                }
-                                            </Col>
-                                        </Row>
-                                    </ListGroup.Item>
-                                </div>
-                            )
-                        })
-
+                        ? movie_list
                         : <span></span>
                     }
                 </ListGroup>

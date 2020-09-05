@@ -1,7 +1,7 @@
 import React from 'react';
 import MovieList from './MovieList';
 import FavoriteMovie from './FavoriteMovie';
-import Home from './Home';
+import Home from '../components/Home';
 import './Main.scss'
 import { 
     BrowserRouter, 
