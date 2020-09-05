@@ -2,6 +2,43 @@ import { SEARCH_MOVIE, GET_MOVIE, HANDLE_FAV } from './types';
 import store from '../store';
 import axios from 'axios';
 
+const addFav = (movie) => {
+    if (localStorage.getItem('fav_movies')) {
+        const current_fav =  JSON.parse(localStorage.getItem('fav_movies'));
+        const new_fav = [...current_fav, movie];
+        localStorage.setItem('fav_movies', JSON.stringify(new_fav));
+        return new_fav;
+    } else {
+        const new_fav = [movie];
+        localStorage.setItem('fav_movies', JSON.stringify(new_fav));
+        return new_fav;
+    }
+} 
+
+const removeFav = (imdbID) => {
+    const current_fav = JSON.parse(localStorage.getItem('fav_movies'));
+    const new_fav = current_fav
+        .filter(movie => movie.imdbID !== imdbID)
+        .map(movie => { return movie })
+    localStorage.setItem('fav_movies', JSON.stringify(new_fav));
+    return new_fav;
+}
+
+const isFav = (imdbID) => {
+    let result = false;
+    if (localStorage.getItem('fav_movies')) {
+        const current_fav =  JSON.parse(localStorage.getItem('fav_movies'));
+        current_fav.map(movie => {
+            if (movie.imdbID === imdbID) {
+                if (movie.Fav) {
+                    result = true
+                }
+            }
+        })
+    }
+    return result;
+}
+
 export const searchMovie = (title) => dispatch => {
     axios.get(`http://www.omdbapi.com/?apikey=61a7922a&s=${title}`)
     .then(res => {
@@ -16,7 +53,7 @@ export const searchMovie = (title) => dispatch => {
                     Type: raw_movies[i].Type,
                     Year: raw_movies[i].Year,
                     imdbID: raw_movies[i].imdbID,
-                    Fav: false
+                    Fav: isFav(raw_movies[i].imdbID)
                 }
                 movies.push(movie);
             }
@@ -46,41 +83,18 @@ export const getMovie = (imdbID) => dispatch => {
     })
 }
 
-const addFav = (movie) => {
-    if (localStorage.getItem('fav_movies')) {
-        const current_fav =  JSON.parse(localStorage.getItem('fav_movies'));
-        const new_fav = [...current_fav, movie];
-        localStorage.setItem('fav_movies', JSON.stringify(new_fav));
-        return new_fav;
-    } else {
-        const new_fav = [movie];
-        localStorage.setItem('fav_movies', JSON.stringify(new_fav));
-        return new_fav;
-    }
-} 
-
-const removeFav = (imdbID) => {
-    const current_fav = JSON.parse(localStorage.getItem('fav_movies'));
-    const new_fav = current_fav
-        .filter(movie => movie.imdbID !== imdbID)
-        .map(movie => { return movie })
-    localStorage.setItem('fav_movies', JSON.stringify(new_fav));
-    return new_fav;
-}
-
 export const handleFav = (imdbID) => dispatch => {
     const state = store.getState();
-    let fav_movies = []
     const new_movies = state.data.movies.map( (movie) => {
         if (movie.imdbID === imdbID) {
-            if (movie.Fav) {
+            if (movie.Fav === true) {
                 // remove favorite
                 movie.Fav = false;
                 removeFav(movie.imdbID)
             } else {
                 // adding favorite
-                addFav(movie);
                 movie.Fav = true
+                addFav(movie);
             }
             return movie
         } else {
