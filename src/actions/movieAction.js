@@ -33,7 +33,7 @@ const isFav = (imdbID) => {
 }
 
 export const searchMovie = (title) => dispatch => {
-    axios.get(`http://www.omdbapi.com/?apikey=61a7922a&s=${title}`)
+    axios.get(`https://www.omdbapi.com/?apikey=61a7922a&s=${title}`)
     .then(res => {
         console.log(res)
         if (res.data.Response === "True"){
@@ -73,7 +73,7 @@ export const getMovie = (imdbID) => dispatch => {
         })
     })
     .catch(err => {
-        alert('Error:' + err)
+        alert(err)
         console.log(err)
     })
 }
