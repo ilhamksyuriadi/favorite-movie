@@ -58,7 +58,7 @@ export const searchMovie = (title) => dispatch => {
         }
     })
     .catch(err => {
-        alert('Error:', err)
+        alert('Error:' + err)
         console.log('eerrrror', err)
     })
 }
@@ -73,7 +73,7 @@ export const getMovie = (imdbID) => dispatch => {
         })
     })
     .catch(err => {
-        alert('Error:', err)
+        alert('Error:' + err)
         console.log(err)
     })
 }
