@@ -58,12 +58,13 @@ export const searchMovie = (title) => dispatch => {
         }
     })
     .catch(err => {
+        alert('Error:', err)
         console.log('eerrrror', err)
     })
 }
 
 export const getMovie = (imdbID) => dispatch => {
-    axios.get(`http://www.omdbapi.com/?apikey=61a7922a&i=${imdbID}`)
+    axios.get(`https://www.omdbapi.com/?apikey=61a7922a&i=${imdbID}`)
     .then(res => {
         console.log(res.data)
         dispatch({
@@ -72,6 +73,7 @@ export const getMovie = (imdbID) => dispatch => {
         })
     })
     .catch(err => {
+        alert('Error:', err)
         console.log(err)
     })
 }
